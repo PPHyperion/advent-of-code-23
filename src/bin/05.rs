@@ -4,7 +4,42 @@ use itertools::Itertools;
 advent_of_code::solution!(5);
 
 pub fn part_one(input: &str) -> Option<u64> {
-    let seeds: Vec<u64> = input
+    let seeds: Vec<u64> = extract_seeds(input);
+    let mappings_map = create_mappings_map(input);
+
+    seeds.iter().map(|seed| map_seed(seed, &mappings_map)).min()
+}
+
+pub fn part_two(input: &str) -> Option<u64> {
+    let seed_ranges = extract_seeds(input);
+    let mappings_map = create_mappings_map(input);
+
+    let mut ctr = 0;
+    let mut location_numbers: Vec<u64> = Vec::new();
+    while ctr < seed_ranges.len() - 1 {
+        let mut seeds: Vec<u64> = Vec::new();
+        let start = seed_ranges.get(ctr).unwrap();
+        let range = seed_ranges.get(ctr + 1).unwrap();
+
+        for num in 0..*range {
+            seeds.push(start + num);
+        }
+
+        let min_result: u64 = seeds
+            .iter()
+            .map(|seed| map_seed(seed, &mappings_map))
+            .min()
+            .unwrap();
+        location_numbers.push(min_result);
+
+        ctr += 2;
+    }
+
+    location_numbers.iter().min().copied()
+}
+
+fn extract_seeds(input: &str) -> Vec<u64> {
+    input
         .lines()
         .nth(0)
         .unwrap()
@@ -13,15 +48,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         .unwrap()
         .split_whitespace()
         .map(|seed| seed.parse().unwrap())
-        .collect();
-
-    let mappings_map = create_mappings_map(input);
-
-    seeds.iter().map(|seed| map_seed(seed, &mappings_map)).min()
-}
-
-pub fn part_two(input: &str) -> Option<u64> {
-    None
+        .collect()
 }
 
 fn create_mappings_map(input: &str) -> BTreeMap<u64, Vec<(u64, u64, u64)>> {
@@ -87,6 +114,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(46));
     }
 }
