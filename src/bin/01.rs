@@ -45,16 +45,10 @@ fn map_part_two(line: &str) -> u32 {
         ctr += 1;
     }
 
-    let size = new_line.chars().collect::<Vec<char>>().len();
+    let size = new_line.chars().count();
     ctr = size - 1;
     'outer: while ctr > 0 {
-        if new_line
-            .chars()
-            .collect::<Vec<char>>()
-            .get(ctr)
-            .unwrap()
-            .is_digit(10)
-        {
+        if new_line.chars().nth(ctr).unwrap().is_digit(10) {
             break;
         }
         let sub = &new_line[ctr..size];
