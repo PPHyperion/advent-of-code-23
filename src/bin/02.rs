@@ -27,10 +27,8 @@ fn map_part_one(line: &str) -> u32 {
         .get(1)
         .map(|num| num.as_str().parse::<u32>().unwrap())
         .unwrap();
-    let cube_sets: Vec<&str> = line.split(": ").collect::<Vec<&str>>()[1]
-        .split("; ")
-        .collect();
 
+    let cube_sets = extract_cube_sets(line);
     let mut valid = true;
 
     cube_sets.iter().for_each(|set| {
@@ -48,9 +46,7 @@ fn map_part_one(line: &str) -> u32 {
 }
 
 fn map_part_two(line: &str) -> u32 {
-    let cube_sets: Vec<&str> = line.split(": ").collect::<Vec<&str>>()[1]
-        .split("; ")
-        .collect();
+    let cube_sets = extract_cube_sets(line);
 
     let mut min_red: u32 = 0;
     let mut min_blue: u32 = 0;
@@ -70,6 +66,10 @@ fn map_part_two(line: &str) -> u32 {
     });
 
     min_red * min_blue * min_green
+}
+
+fn extract_cube_sets(line: &str) -> Vec<&str> {
+    line.split(": ").nth(1).unwrap().split("; ").collect()
 }
 
 fn extract_cubes(set: &&str) -> (u32, u32, u32) {
