@@ -9,7 +9,8 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let result: u32 = input.lines().map(map_part_two).sum();
+    Some(result)
 }
 
 lazy_static! {
@@ -46,6 +47,31 @@ fn map_part_one(line: &str) -> u32 {
     game_number
 }
 
+fn map_part_two(line: &str) -> u32 {
+    let cube_sets: Vec<&str> = line.split(": ").collect::<Vec<&str>>()[1]
+        .split("; ")
+        .collect();
+
+    let mut min_red: u32 = 0;
+    let mut min_blue: u32 = 0;
+    let mut min_green: u32 = 0;
+
+    cube_sets.iter().for_each(|set| {
+        let (red, green, blue) = extract_cubes(set);
+        if red > min_red {
+            min_red = red;
+        }
+        if green > min_green {
+            min_green = green;
+        }
+        if blue > min_blue {
+            min_blue = blue;
+        }
+    });
+
+    min_red * min_blue * min_green
+}
+
 fn extract_cubes(set: &&str) -> (u32, u32, u32) {
     let red = REGEX_RED.captures(set).map_or(0, |caps| {
         caps.get(1).unwrap().as_str().parse::<u32>().unwrap()
@@ -72,6 +98,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(2286));
     }
 }
